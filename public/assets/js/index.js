@@ -1,7 +1,3 @@
-const $noteTitle = document.querySelector('#note-title');
-const $noteText = document.querySelector('#note-text');
-
-
 let noteTitle;
 let noteText;
 let saveNoteBtn;
@@ -29,13 +25,25 @@ const hide = (elem) => {
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
-const getNotes = () =>
-  fetch('/api/notes', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+const getNotes = (inputData = {}) => {
+  let queryUrl = '/notes?';
+  Object.entries(inputData).forEach(([key, value]) => {
+    queryUrl += `${key}=${value}&`;
+});
+console.log(queryUrl);
+
+fetch(queryUrl)
+.then(response => {
+  if (!response.ok) {
+    return alert('Error: ' + response.statusText);
+  }
+  return response.json();
+})
+.then(noteData => {
+  console.log(noteData);
+  printResults(noteData);
+})
+};
 
 const saveNote = (note) =>
   fetch('/api/notes', {
@@ -78,6 +86,24 @@ const handleNoteSave = () => {
   saveNote(newNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
+  });
+  fetch('/notes', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-type': 'application/json'
+    },
+    body: JSON.stringify(noteObject)
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    alert('Error: ' + response.statusText);
+  })
+  .then(postResponse => {
+    console.log(postResponse);
+    alert('You have just added a new note!')
   });
 };
 
