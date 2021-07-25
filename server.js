@@ -18,3 +18,7 @@ app.use('/', htmlRoutes);
 app.listen(PORT, () => {
   console.log(`API server now on port ${PORT}!`);
 });
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/assets/index.html'));
+});

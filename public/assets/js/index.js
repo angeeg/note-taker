@@ -25,9 +25,9 @@ const hide = (elem) => {
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
-const getNotes = (inputData = {}) => {
+const getNotes = (noteTitle, noteText = {}) => {
   let queryUrl = '/notes?';
-  Object.entries(inputData).forEach(([key, value]) => {
+  Object.noteArr(noteTitle, noteText).forEach(([key, value]) => {
     queryUrl += `${key}=${value}&`;
 });
 console.log(queryUrl);
@@ -35,13 +35,13 @@ console.log(queryUrl);
 fetch(queryUrl)
 .then(response => {
   if (!response.ok) {
-    return alert('Error: ' + response.statusText);
+    return alert(`Error:  ${response.statusText}`);
   }
   return response.json();
 })
-.then(noteData => {
-  console.log(noteData);
-  printResults(noteData);
+.then(noteArr => {
+  console.log(noteArr);
+  printResults(noteArr);
 })
 };
 
@@ -105,6 +105,7 @@ const handleNoteSave = () => {
     console.log(postResponse);
     alert('You have just added a new note!')
   });
+  
 };
 
 // Delete the clicked note
@@ -201,7 +202,7 @@ const renderNoteList = async (notes) => {
 };
 
 // Gets notes from the db and renders them to the sidebar
-const getAndRenderNotes = () => getNotes().then(renderNoteList);
+const getAndRenderNotes = () => getNotes().then(renderNoteList)
 
 if (window.location.pathname === '/notes') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
@@ -209,5 +210,6 @@ if (window.location.pathname === '/notes') {
   noteTitle.addEventListener('keyup', handleRenderSaveBtn);
   noteText.addEventListener('keyup', handleRenderSaveBtn);
 }
+
 
 getAndRenderNotes();
